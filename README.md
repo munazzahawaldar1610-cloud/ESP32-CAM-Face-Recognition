@@ -1,56 +1,58 @@
-# ESP32-CAM Face Recognition System
+# Face Recognition using ESP32-CAM
 
-A diploma-level **embedded systems + IoT + computer vision** prototype. An AI Thinker **ESP32-CAM** streams live video over Wi-Fi to a Python application, which detects faces (Haar Cascade), recognises known people (LBPH) and shows the result on a **Flask** web dashboard.
+Diploma **capstone project** (Electronics & Telecommunication Engineering, Government Polytechnic Solapur, academic year 2025–26). An **AI Thinker ESP32-CAM** module provides the camera and Wi-Fi web server, and a browser dashboard (**"FaceRecog"**) detects faces, registers new people and recognises them as **known or unknown** in real time.
 
-> **Student prototype.** Built as an Electronics & Telecommunication Engineering diploma project to demonstrate how embedded hardware, networking and classical computer vision fit together. It is not production-grade or security-certified, and no recognition accuracy is claimed beyond what you measure on your own test data.
-
-## Features
-
-- Live video streaming from the ESP32-CAM over Wi-Fi (MJPEG)
-- Real-time face detection with an OpenCV Haar Cascade classifier
-- Known / Unknown face recognition with the LBPH recognizer
-- Bounding boxes and name labels drawn on the live feed
-- Browser dashboard (Flask + HTML/CSS) to view the stream
-- One-click model retraining from the dashboard
-- Laptop-webcam fallback for development without hardware
+The project was designed as a low-cost base for **security and attendance systems** (office / college attendance, access control, smart-home security).
 
 ## How it works
 
 ```
-ESP32-CAM  ->  Wi-Fi (MJPEG /stream)  ->  Python + OpenCV
-   ->  Haar Cascade face detection  ->  LBPH face recognition
-   ->  Known / Unknown + name label drawn on frame
-   ->  Flask /video_feed  ->  browser dashboard
+OV2640 camera -> ESP32-CAM (Wi-Fi camera web server, Arduino firmware)
+   -> PC / laptop browser -> FaceRecog dashboard (HTML + CSS + JavaScript)
+   -> face-api.js: face detection, 68-point landmarks, face descriptors
+   -> match against saved faces -> green box + name (known) or red box (unknown)
 ```
 
-The Flask app exposes `/video_feed` (annotated MJPEG stream), `/status` (JSON) and `/train` (POST, retrain the model).
+**Firmware (ESP32-CAM, Arduino IDE).** Initialises the AI Thinker camera (JPEG, QVGA 320x240), connects to Wi-Fi, starts the camera server and prints the board's IP address on the Serial Monitor (115200 baud). The board is flashed through an FTDI USB-to-serial adapter with GPIO0 tied to GND during upload.
 
-## Tech stack
+**Dashboard (browser).** Uses [face-api.js](https://github.com/justadudewhohacks/face-api.js) with three models: SSD MobileNet v1 (detection, minimum confidence 0.6), a 68-point face landmark net and a face recognition net. A `FaceMatcher` with a 0.6 distance threshold compares each detected face to the saved ones. Detection runs every 80 ms.
 
-| Area | Tools |
+**Registering a face.** Enter a name, press *Capture & Save*, and the face descriptor is stored in the browser's `localStorage` so it is available next time.
+
+## Features
+
+- Live face detection with bounding boxes
+- Add new people from the dashboard (name + capture)
+- Known (green) / Unknown (red) labels on the live view
+- Saved faces reloaded automatically on the next visit
+- Pages: Dashboard, *What is Face Recog?*, About / Student Info
+
+## Hardware
+
+| Component | Role |
 | --- | --- |
-| Hardware | AI Thinker ESP32-CAM, USB-to-TTL (FTDI) programmer, 5 V supply |
-| Firmware | Arduino IDE, C++ |
-| Vision | Python, OpenCV (`opencv-contrib-python` for `cv2.face`), NumPy |
-| Web | Flask, HTML/CSS |
-| Network | Wi-Fi (2.4 GHz), MJPEG over HTTP |
+| AI Thinker ESP32-CAM (OV2640 camera, Wi-Fi) | Image capture and Wi-Fi camera server |
+| FTDI USB-to-serial adapter | Programming the ESP32-CAM |
+| 5 V supply (at least 2 A recommended) | Stable power during streaming |
+| PC / laptop with a browser | Runs the dashboard |
+
+## Tools
+
+Arduino IDE (ESP32 board support, ESP32-CAM library), Visual Studio, HTML/CSS/JavaScript, face-api.js. The project report also covers OpenCV and Python as background for face detection and recognition.
 
 ## Documentation
 
-The full write-up (problem statement, objectives, architecture, hardware and software requirements, setup steps, how Haar Cascade and LBPH work, troubleshooting, limitations and future work) is in the project report:
+The repository contains project documentation as PDF. The full capstone report (introduction, literature survey, scope, methodology, designs and working, results and applications) is the primary reference for this work.
 
 [ESP32_CAM_Face_Recognition_Report (PDF)](ESP32_CAM_Face_Recognition_Report%20%282%29.pdf)
 
-## Limitations and possible improvements
+## Status
 
-- Haar Cascade + LBPH are classical methods and are sensitive to lighting, pose and image quality
-- Works best with a small, well-lit training set per person
-- Possible next steps: a deep-learning detector or recogniser, better low-light handling, and logging of recognition events
+This is a student prototype. Source files (ESP32 firmware and dashboard page) are being organised for upload. No recognition accuracy figure is claimed.
 
-## Privacy and safety
+## Privacy
 
-- Only use face data from people who have agreed to it
-- Never commit real Wi-Fi credentials or personal photos to a public repository
+Only use face data of people who have agreed to it. Do not publish Wi-Fi credentials or personal photos.
 
 ## Author
 
