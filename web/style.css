@@ -1,0 +1,20 @@
+/* Minimal stylesheet for the FaceRecog dashboard */
+:root { --bg: #0b1b33; --panel: #10264a; --text: #e6eefc; --accent: #4fc3f7; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+.app-container { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--panel); padding: 24px 16px; }
+.sidebar h2 { color: var(--accent); margin-top: 0; }
+.nav-links { list-style: none; padding: 0; }
+.nav-links a { display: block; padding: 10px 12px; margin-bottom: 8px; color: var(--text); text-decoration: none; border-radius: 6px; }
+.nav-links a.active { border: 1px solid var(--accent); }
+.main-content { flex: 1; padding: 24px; }
+.page-title { margin-top: 0; }
+.camera-wrapper { display: flex; flex-wrap: wrap; gap: 24px; }
+.video-container { position: relative; display: inline-block; }
+.video-container video { display: block; max-width: 100%; transform: scaleX(-1); } /* mirrored view */
+.video-container canvas { position: absolute; left: 0; top: 0; }
+.controls-section { min-width: 240px; }
+.controls-section input { width: 100%; padding: 8px; margin-bottom: 8px; }
+.btn-primary { padding: 8px 16px; background: #1faa6b; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+.status-text { color: #9fb3d1; }
